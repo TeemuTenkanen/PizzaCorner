@@ -9,12 +9,23 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
+import firebase from "./Firebase/firebase";
+
 class App extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       sortBy: "Near you",
+      speed: "",
     };
+  }
+
+  componentDidMount() {
+    const testRef = firebase.database().ref("react");
+    testRef.on("value", (snapshot) => {
+      let data = snapshot.val();
+      console.log(data);
+    });
   }
 
   handleChange = (event) => {
