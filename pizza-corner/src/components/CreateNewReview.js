@@ -1,6 +1,5 @@
 import React from "react";
 import defaultPicture from "../testPictures/defaultPicture.png";
-
 import firebase from "./Firebase/firebase";
 
 import Grid from "@material-ui/core/Grid";
@@ -28,7 +27,7 @@ class CreateNewReview extends React.Component {
       stars: 0,
       price: 0,
       comment: "",
-      imageUrl: "",
+      imageUrl: "null",
       previewImageFile: null,
       snackBarOpen: false,
     };
@@ -42,6 +41,9 @@ class CreateNewReview extends React.Component {
 
   handlePrice = (event) => {
     let value = event.target.value;
+    if (typeof value == "string") {
+      value = parseFloat(event.target.value.replace(",", "."));
+    }
     this.setState({ price: value });
   };
 
@@ -73,7 +75,15 @@ class CreateNewReview extends React.Component {
 
   onSend = (event) => {
     event.preventDefault();
-    console.log("send start...");
+    let today = new Date();
+    let date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    let time =
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     firebase
       .database()
       .ref("Restaurants/" + this.state.restaurantData.name + "/reviews")
@@ -82,6 +92,7 @@ class CreateNewReview extends React.Component {
         price: this.state.price,
         stars: this.state.stars,
         picture: this.state.imageUrl,
+        timestamp: date + " " + time,
       });
     this.setState({ snackBarOpen: true });
   };

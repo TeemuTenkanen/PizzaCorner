@@ -7,7 +7,11 @@ import RestaurantPage from "./RestaurantPage";
 import CreateNewReview from "./CreateNewReview";
 
 import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
 import { FavoriteBorder, Home } from "@material-ui/icons";
+import MenuIcon from "@material-ui/icons/Menu";
+import SearchIcon from "@material-ui/icons/Search";
+import Drawer from "@material-ui/core/Drawer";
 
 import firebase from "./Firebase/firebase";
 
@@ -16,8 +20,13 @@ class App extends React.Component {
     super();
     this.state = {
       data: [],
+      drawerOpen: false,
     };
   }
+
+  toggleDrawer = (event) => {
+    this.setState({ drawerOpen: !this.state.drawerOpen });
+  };
 
   componentDidMount() {
     const testRef = firebase.database().ref("Restaurants");
@@ -32,8 +41,12 @@ class App extends React.Component {
             price: dbData[restaurant].reviews[review].price,
             stars: dbData[restaurant].reviews[review].stars,
             picture: dbData[restaurant].reviews[review].picture,
+            timestamp: dbData[restaurant].reviews[review].timestamp,
           });
         }
+        reviews.sort(function (a, b) {
+          return new Date(b.timestamp) - new Date(a.timestamp);
+        });
         newState.push({
           name: dbData[restaurant].name,
           location: dbData[restaurant].location,
@@ -42,6 +55,7 @@ class App extends React.Component {
           reviews: reviews,
         });
       }
+
       this.setState({ data: newState });
     });
   }
@@ -71,12 +85,36 @@ class App extends React.Component {
               <Grid item xs={6} align="center">
                 <h2>PIZZA CORNER</h2>
               </Grid>
-              <Grid item xs align="center">
-                <FavoriteBorder
+              <Grid item xs align="center" onClick={this.toggleDrawer}>
+                <MenuIcon
                   style={{ top: "3px", position: "relative" }}
-                ></FavoriteBorder>
+                ></MenuIcon>
               </Grid>
             </Grid>
+            <Drawer
+              anchor={"right"}
+              open={this.state.drawerOpen}
+              onClose={this.toggleDrawer}
+            >
+              <Box width={200} ml={2} mt={2}>
+                <Grid container spacing={3} alignItems="center">
+                  <Grid item align="left">
+                    <SearchIcon />
+                  </Grid>
+                  <Grid item align="left">
+                    <p>Search restaurants</p>
+                  </Grid>
+                </Grid>
+                <Grid container spacing={3} alignItems="center">
+                  <Grid item align="left">
+                    <FavoriteBorder />
+                  </Grid>
+                  <Grid item align="left">
+                    <p>Favorites</p>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Drawer>
 
             <Route
               path="/"

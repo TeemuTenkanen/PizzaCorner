@@ -1,12 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import pizzaPicture from "../testPictures/pizza1.jpg";
-
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableRow from "@material-ui/core/TableRow";
-import MuiTableCell from "@material-ui/core/TableCell";
+import ReviewCard from "./ReviewCard";
 
 import Grid from "@material-ui/core/Grid";
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
@@ -18,8 +13,6 @@ import { FavoriteBorder } from "@material-ui/icons";
 
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
-
-import { withStyles } from "@material-ui/core/styles";
 
 class RestaurantPage extends React.Component {
   constructor(props) {
@@ -44,8 +37,8 @@ class RestaurantPage extends React.Component {
       priceSum += reviews[i].price;
       starSum += reviews[i].stars;
     }
-    let priceAverage = priceSum / reviews.length;
-    let starAverage = starSum / reviews.length;
+    let priceAverage = Math.round((priceSum / reviews.length) * 100) / 100;
+    let starAverage = Math.round((starSum / reviews.length) * 100) / 100;
     let reviewAverage = "";
     if (starAverage < 1) {
       reviewAverage = "Poor ";
@@ -78,12 +71,6 @@ class RestaurantPage extends React.Component {
   };
 
   render() {
-    const TableCell = withStyles({
-      root: {
-        borderBottom: "none",
-      },
-    })(MuiTableCell);
-
     return (
       <div style={{ paddingTop: "80px" }}>
         <img
@@ -147,40 +134,44 @@ class RestaurantPage extends React.Component {
           <Box mt={6}>
             <h2>Comments and reviews</h2>
           </Box>
-          <TableContainer>
-            <Table aria-label="caption table" size="small">
-              <TableBody>
-                {this.state.restaurantData.reviews.map((review) => (
-                  <TableRow key={review.comment}>
-                    <TableCell component="th" scope="row">
-                      {review.comment}
-                    </TableCell>
-                    <TableCell align="right">{review.stars}/5</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Box mt={3}>
-            <Grid container spacing={3} alignItems="center">
-              <Grid item align="left">
-                <CreateIcon></CreateIcon>
-              </Grid>
-              <Grid item xs={6} align="left">
-                <Link
-                  to={{
-                    pathname: "/CreateNewReview",
-                    state: {
-                      restaurantData: this.state.restaurantData,
-                    },
-                  }}
-                  style={{ color: "black", textDecoration: "none" }}
-                >
-                  <p>Add a review...</p>
-                </Link>
-              </Grid>
-            </Grid>
+          <Box mb={10}>
+            {this.state.restaurantData.reviews.map((review) => (
+              <Box mt={6} key={review.comment}>
+                <ReviewCard review={review}></ReviewCard>
+              </Box>
+            ))}
           </Box>
+
+          <Grid
+            style={{
+              position: "fixed",
+              bottom: 0,
+              zIndex: 100,
+              background: "white",
+              width: "100%",
+              paddingBottom: "20px",
+            }}
+            container
+            spacing={3}
+            justify="center"
+          >
+            <Grid item align="center">
+              <CreateIcon></CreateIcon>
+            </Grid>
+            <Grid align="center">
+              <Link
+                to={{
+                  pathname: "/CreateNewReview",
+                  state: {
+                    restaurantData: this.state.restaurantData,
+                  },
+                }}
+                style={{ color: "black", textDecoration: "none" }}
+              >
+                <p>Add a review...</p>
+              </Link>
+            </Grid>
+          </Grid>
         </Container>
       </div>
     );
