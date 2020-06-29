@@ -5,12 +5,14 @@ import { Link } from "react-router-dom";
 import MainPage from "./MainPage";
 import RestaurantPage from "./RestaurantPage";
 import CreateNewReview from "./CreateNewReview";
+import AddNewRestaurant from "./AddNewRestaurant";
 
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import { FavoriteBorder, Home } from "@material-ui/icons";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
+import AddIcon from "@material-ui/icons/Add";
 import Drawer from "@material-ui/core/Drawer";
 
 import firebase from "./Firebase/firebase";
@@ -21,10 +23,12 @@ class App extends React.Component {
     this.state = {
       data: [],
       drawerOpen: false,
+      loading: false,
     };
   }
 
   toggleDrawer = (event) => {
+    console.log("TESTI");
     this.setState({ drawerOpen: !this.state.drawerOpen });
   };
 
@@ -50,13 +54,11 @@ class App extends React.Component {
         newState.push({
           name: dbData[restaurant].name,
           location: dbData[restaurant].location,
-          stars: dbData[restaurant].stars,
           openHours: dbData[restaurant].openHours,
           reviews: reviews,
         });
       }
-
-      this.setState({ data: newState });
+      this.setState({ data: newState, loading: true });
     });
   }
 
@@ -99,18 +101,30 @@ class App extends React.Component {
               <Box width={200} ml={2} mt={2}>
                 <Grid container spacing={3} alignItems="center">
                   <Grid item align="left">
-                    <SearchIcon />
-                  </Grid>
-                  <Grid item align="left">
-                    <p>Search restaurants</p>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={3} alignItems="center">
-                  <Grid item align="left">
                     <FavoriteBorder />
                   </Grid>
                   <Grid item align="left">
                     <p>Favorites</p>
+                  </Grid>
+                </Grid>
+                <Grid container spacing={3} alignItems="center">
+                  <Grid item align="left">
+                    <Link
+                      to="/AddNewRestaurant"
+                      style={{ color: "black", textDecoration: "none" }}
+                      onClick={this.toggleDrawer}
+                    >
+                      <AddIcon />
+                    </Link>
+                  </Grid>
+                  <Grid item align="left">
+                    <Link
+                      to="/AddNewRestaurant"
+                      style={{ color: "black", textDecoration: "none" }}
+                      onClick={this.toggleDrawer}
+                    >
+                      <p>Add restaurant</p>
+                    </Link>
                   </Grid>
                 </Grid>
               </Box>
@@ -120,7 +134,9 @@ class App extends React.Component {
               path="/"
               exact
               strict
-              render={(props) => <MainPage data={this.state.data} />}
+              render={(props) => (
+                <MainPage data={this.state.data} loading={this.state.loading} />
+              )}
             ></Route>
             <Route
               path="/RestaurantPage/:restaurantName"
@@ -133,6 +149,12 @@ class App extends React.Component {
               exact
               strict
               render={(props) => <CreateNewReview {...props} />}
+            ></Route>
+            <Route
+              path="/AddNewRestaurant"
+              exact
+              strict
+              render={(props) => <AddNewRestaurant {...props} />}
             ></Route>
           </div>
         </BrowserRouter>

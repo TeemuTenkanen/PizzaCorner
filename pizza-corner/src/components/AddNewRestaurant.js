@@ -4,6 +4,8 @@ import firebase from "./Firebase/firebase";
 
 import Grid from "@material-ui/core/Grid";
 
+import AccessTimeIcon from "@material-ui/icons/AccessTime";
+import LocationOnIcon from "@material-ui/icons/LocationOn";
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
 import EuroSymbolIcon from "@material-ui/icons/EuroSymbol";
 import ChatBubbleOutlineIcon from "@material-ui/icons/ChatBubbleOutline";
@@ -19,11 +21,10 @@ import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 
-class CreateNewReview extends React.Component {
+class AddNewRestaurant extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      restaurantData: this.props.location.state.restaurantData,
       stars: 0,
       price: 0,
       comment: "",
@@ -31,16 +32,10 @@ class CreateNewReview extends React.Component {
       previewImageFile: null,
       snackBarOpen: false,
     };
-    this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange = (event) => {
     let value = event.target.value;
-    if (event.target.name === "stars") {
-      value = Number(event.target.value);
-    } else if (event.target.name === "price" && typeof value == "string") {
-      value = parseFloat(event.target.value.replace(",", "."));
-    }
     this.setState({ [event.target.name]: value });
   };
 
@@ -90,94 +85,54 @@ class CreateNewReview extends React.Component {
         </Snackbar>
         <Grid spacing={3} container justify="center">
           <Grid item align="center">
-            <h1>Review {this.state.restaurantData.name}</h1>
+            <h1>Add new restaurant</h1>
           </Grid>
           <form onSubmit={this.onSend}>
-            <Grid container spacing={3} alignItems="center" justify="center">
+            <Grid container spacing={3} alignItems="center">
               <Grid item xs={3} align="center">
-                <InsertEmoticonIcon></InsertEmoticonIcon>
+                Name
               </Grid>
-              <Grid item xs={6} align="center">
-                <Box component="fieldset" borderColor="transparent">
-                  <Rating
-                    name="stars"
-                    value={this.state.stars}
-                    onChange={this.handleChange}
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-            <Grid container spacing={3} alignItems="center" justify="center">
-              <Grid item xs={3} align="center">
-                <EuroSymbolIcon></EuroSymbolIcon>
-              </Grid>
-              <Grid item xs={6} align="center">
+              <Grid item xs={9} align="center">
                 <TextField
-                  name="price"
-                  onChange={this.handleChange}
-                  value={this.state.price}
-                  label="The price of pizza?"
-                  type="number"
+                  name="name"
+                  onChange={this.openHours}
+                  value={this.state.name}
+                  placeholder="Add name"
                 />
               </Grid>
             </Grid>
             <Box mt={3}>
-              <Grid container spacing={3} alignItems="center" justify="center">
+              <Grid container spacing={3} alignItems="center">
                 <Grid item xs={3} align="center">
-                  <ChatBubbleOutlineIcon></ChatBubbleOutlineIcon>
+                  <LocationOnIcon style={{ paddingRight: "15px" }} />
                 </Grid>
-                <Grid item xs={6} align="center">
+                <Grid item xs={9} align="center">
                   <TextField
-                    name="comment"
+                    name="location"
                     onChange={this.handleChange}
-                    value={this.state.comment}
-                    placeholder="Add comment"
-                    multiline
-                    rows={1}
-                    rowsMax={4}
+                    value={this.state.location}
+                    placeholder="Add location"
                   />
                 </Grid>
               </Grid>
             </Box>
             <Box mt={3}>
-              <Grid container spacing={3} alignItems="center" justify="center">
+              <Grid container spacing={3} alignItems="center">
                 <Grid item xs={3} align="center">
-                  <PhotoCamera />
+                  <AccessTimeIcon style={{ paddingRight: "15px" }} />
                 </Grid>
-                <Grid item xs={6} align="center">
-                  <Button variant="contained" color="primary" component="label">
-                    Add picture
-                    <input
-                      style={{ display: "none" }}
-                      accept="image/*"
-                      type="file"
-                      onChange={this.handleImageChange}
-                    />
-                  </Button>
+                <Grid item xs={9} align="center">
+                  <TextField
+                    name="openHours"
+                    onChange={this.handleChange}
+                    value={this.state.openHours}
+                    placeholder="Add open hours"
+                  />
                 </Grid>
               </Grid>
             </Box>
-            <div>
-              {this.state.previewImageFile == null ? (
-                <Box mt={5}>
-                  <img
-                    src={defaultPicture}
-                    alt="previewPicture"
-                    style={{ width: "100%" }}
-                  />
-                </Box>
-              ) : (
-                <Box mt={5}>
-                  <img
-                    src={this.state.previewImageFile}
-                    alt="previewPicture"
-                    style={{ width: "100%" }}
-                  />
-                </Box>
-              )}
-            </div>
             <Grid container alignItems="center">
-              <Grid item xs={12} style={{ marginTop: "15px" }} align="center">
+              <Grid item xs={12} style={{ marginTop: "50px" }} align="center">
                 <Button
                   type="submit"
                   value="Submit"
@@ -185,7 +140,7 @@ class CreateNewReview extends React.Component {
                   color="primary"
                   disabled={submitDisabled}
                 >
-                  Send review
+                  Create new restaurant
                 </Button>
               </Grid>
             </Grid>
@@ -196,4 +151,4 @@ class CreateNewReview extends React.Component {
   }
 }
 
-export default CreateNewReview;
+export default AddNewRestaurant;

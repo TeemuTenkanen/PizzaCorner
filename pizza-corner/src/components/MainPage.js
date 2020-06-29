@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import defaultPicture from "../testPictures/defaultPicture.png";
 
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
@@ -7,12 +8,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
-import pizzaPicture from "../testPictures/pizza1.jpg";
 import CardActionArea from "@material-ui/core/CardActionArea";
 
 import Table from "@material-ui/core/Table";
@@ -52,6 +53,7 @@ class MainPage extends React.Component {
 
   componentDidMount() {
     window.scrollTo(0, 0);
+    console.log(this.props.data);
   }
 
   render() {
@@ -62,7 +64,7 @@ class MainPage extends React.Component {
     })(MuiTableCell);
 
     return (
-      <div style={{ paddingTop: "80px" }}>
+      <div style={{ paddingTop: "85px" }}>
         <Grid container alignItems="center" justify="center">
           <FormControl>
             <TextField
@@ -79,9 +81,7 @@ class MainPage extends React.Component {
             </Box>
           </FormControl>
         </Grid>
-        {this.props.data === [] ? (
-          <div>loading</div>
-        ) : (
+        {this.props.loading ? (
           <>
             {this.props.data.map((restaurant) => (
               <Box mb={6} key={restaurant.name}>
@@ -110,7 +110,7 @@ class MainPage extends React.Component {
                         image={
                           restaurant.reviews[0].picture !== "null"
                             ? restaurant.reviews[0].picture
-                            : pizzaPicture
+                            : defaultPicture
                         }
                         title="Pizza mozarella"
                         style={{ height: 0, paddingTop: "56.25%" }}
@@ -139,6 +139,12 @@ class MainPage extends React.Component {
               </Box>
             ))}
           </>
+        ) : (
+          <Box mt={15}>
+            <Grid container alignItems="center" justify="center">
+              <CircularProgress />
+            </Grid>
+          </Box>
         )}
       </div>
     );

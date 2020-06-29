@@ -72,7 +72,7 @@ class RestaurantPage extends React.Component {
 
   render() {
     return (
-      <div style={{ paddingTop: "80px" }}>
+      <div style={{ paddingTop: "85px" }}>
         <img
           src={
             this.state.restaurantData.reviews[0].picture !== "null"
@@ -100,7 +100,7 @@ class RestaurantPage extends React.Component {
           </Grid>
           <Grid container spacing={3} alignItems="center">
             <Grid item align="left">
-              <InsertEmoticonIcon></InsertEmoticonIcon>
+              <InsertEmoticonIcon />
             </Grid>
             <Grid item xs={6} align="left">
               <p>{this.state.reviewAverage}/5</p>
@@ -108,7 +108,7 @@ class RestaurantPage extends React.Component {
           </Grid>
           <Grid container spacing={3} alignItems="center">
             <Grid item align="left">
-              <AccessTimeIcon></AccessTimeIcon>
+              <AccessTimeIcon />
             </Grid>
             <Grid item xs={6} align="left">
               <p>{this.state.restaurantData.openHours}</p>
@@ -116,7 +116,7 @@ class RestaurantPage extends React.Component {
           </Grid>
           <Grid container spacing={3} alignItems="center">
             <Grid item align="left">
-              <LocationOnIcon></LocationOnIcon>
+              <LocationOnIcon />
             </Grid>
             <Grid item xs={6} align="left">
               <p>{this.state.restaurantData.location}</p>
@@ -124,7 +124,7 @@ class RestaurantPage extends React.Component {
           </Grid>
           <Grid container spacing={3} alignItems="center">
             <Grid item align="left">
-              <EuroSymbolIcon></EuroSymbolIcon>
+              <EuroSymbolIcon />
             </Grid>
             <Grid item xs={6} align="left">
               <p>{this.state.priceAverage}e</p>
