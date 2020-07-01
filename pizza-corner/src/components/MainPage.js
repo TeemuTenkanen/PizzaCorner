@@ -53,7 +53,6 @@ class MainPage extends React.Component {
 
   componentDidMount() {
     window.scrollTo(0, 0);
-    console.log(this.props.data);
   }
 
   render() {
@@ -83,7 +82,7 @@ class MainPage extends React.Component {
         </Grid>
         {this.props.loading ? (
           <>
-            {this.props.data.map((restaurant) => (
+            {this.props.restaurantData.map((restaurant) => (
               <Box mb={6} key={restaurant.name}>
                 <Link
                   to={{

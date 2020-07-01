@@ -1,76 +1,87 @@
 import React from "react";
-import defaultPicture from "../testPictures/defaultPicture.png";
 import firebase from "./Firebase/firebase";
 
 import Grid from "@material-ui/core/Grid";
 
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import LocationOnIcon from "@material-ui/icons/LocationOn";
-import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
-import EuroSymbolIcon from "@material-ui/icons/EuroSymbol";
-import ChatBubbleOutlineIcon from "@material-ui/icons/ChatBubbleOutline";
 
 import TextField from "@material-ui/core/TextField";
-import Rating from "@material-ui/lab/Rating";
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 
 import Button from "@material-ui/core/Button";
-import PhotoCamera from "@material-ui/icons/PhotoCamera";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 
-class AddNewRestaurant extends React.Component {
+class RequestNewRestaurant extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      stars: 0,
-      price: 0,
-      comment: "",
-      imageUrl: "null",
-      previewImageFile: null,
+      name: "",
+      location: "",
+      openHours: "",
+      submitDisabled: false,
       snackBarOpen: false,
+      showErrorMessage: false,
+      showNameError: false,
+      restaurantData: this.props.restaurantData,
+      restaurantRequests: this.props.restaurantRequests,
+      restaurantNames: [],
     };
   }
 
+  componentDidMount() {
+    let restaurantNames = [];
+    for (let restaurant in this.state.restaurantData) {
+      restaurantNames.push(this.state.restaurantData[restaurant].name);
+    }
+    for (let request in this.state.restaurantRequests) {
+      restaurantNames.push(this.state.restaurantRequests[request].name);
+    }
+    this.setState({ restaurantNames });
+    console.log(restaurantNames);
+  }
+
   handleChange = (event) => {
+    this.setState({ submitDisabled: false });
     let value = event.target.value;
+    if (event.target.name === "name") {
+      if (this.state.restaurantNames.includes(value)) {
+        this.setState({ showNameError: true, submitDisabled: true });
+      }
+    }
     this.setState({ [event.target.name]: value });
   };
 
   onSend = (event) => {
     event.preventDefault();
-    let today = new Date();
-    let date =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
-    let time =
-      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    firebase
-      .database()
-      .ref("Restaurants/" + this.state.restaurantData.name + "/reviews")
-      .push({
-        comment: this.state.comment,
-        price: this.state.price,
-        stars: this.state.stars,
-        picture: this.state.imageUrl,
-        timestamp: date + " " + time,
+    if (
+      this.state.name !== "" &&
+      this.state.location !== "" &&
+      this.state.openHours !== ""
+    ) {
+      firebase.database().ref("RestaurantRequests").push({
+        name: this.state.name,
+        location: this.state.location,
+        openHours: this.state.openHours,
       });
-    this.setState({ snackBarOpen: true });
+      this.setState({ snackBarOpen: true, submitDisabled: true });
+    } else {
+      this.setState({ showErrorMessage: true });
+    }
+  };
+
+  handleSnackBarClose = (event) => {
+    this.setState({
+      snackBarOpen: false,
+      showErrorMessage: false,
+      showNameError: false,
+    });
   };
 
   render() {
-    const submitDisabled =
-      this.state.price !== 0 &&
-      this.state.comment !== "" &&
-      this.state.stars !== 0
-        ? false
-        : true;
-
     return (
       <Container style={{ paddingTop: "85px" }}>
         <Snackbar
@@ -80,12 +91,32 @@ class AddNewRestaurant extends React.Component {
           onClose={this.handleSnackBarClose}
         >
           <MuiAlert onClose={this.handleSnackBarClose} severity="success">
-            This is a success message!
+            You created new restaurant
+          </MuiAlert>
+        </Snackbar>
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          open={this.state.showErrorMessage}
+          autoHideDuration={6000}
+          onClose={this.handleSnackBarClose}
+        >
+          <MuiAlert onClose={this.handleSnackBarClose} severity="error">
+            You must fill every input
+          </MuiAlert>
+        </Snackbar>
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          open={this.state.showNameError}
+          autoHideDuration={6000}
+          onClose={this.handleSnackBarClose}
+        >
+          <MuiAlert onClose={this.handleSnackBarClose} severity="error">
+            This restaurant is added already
           </MuiAlert>
         </Snackbar>
         <Grid spacing={3} container justify="center">
           <Grid item align="center">
-            <h1>Add new restaurant</h1>
+            <h1>Request new restaurant</h1>
           </Grid>
           <form onSubmit={this.onSend}>
             <Grid container spacing={3} alignItems="center">
@@ -95,7 +126,7 @@ class AddNewRestaurant extends React.Component {
               <Grid item xs={9} align="center">
                 <TextField
                   name="name"
-                  onChange={this.openHours}
+                  onChange={this.handleChange}
                   value={this.state.name}
                   placeholder="Add name"
                 />
@@ -138,9 +169,9 @@ class AddNewRestaurant extends React.Component {
                   value="Submit"
                   variant="contained"
                   color="primary"
-                  disabled={submitDisabled}
+                  disabled={this.state.submitDisabled}
                 >
-                  Create new restaurant
+                  Request new restaurant
                 </Button>
               </Grid>
             </Grid>
@@ -151,4 +182,4 @@ class AddNewRestaurant extends React.Component {
   }
 }
 
-export default AddNewRestaurant;
+export default RequestNewRestaurant;

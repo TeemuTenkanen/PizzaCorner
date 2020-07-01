@@ -31,7 +31,6 @@ class CreateNewReview extends React.Component {
       previewImageFile: null,
       snackBarOpen: false,
     };
-    this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange = (event) => {
@@ -42,6 +41,27 @@ class CreateNewReview extends React.Component {
       value = parseFloat(event.target.value.replace(",", "."));
     }
     this.setState({ [event.target.name]: value });
+  };
+
+  handleImageChange = (event) => {
+    let reader = new FileReader();
+    let picture = event.target.files[0];
+
+    //Preview purposes set this first
+    this.setState({
+      previewImageFile: URL.createObjectURL(event.target.files[0]),
+    });
+
+    reader.onloadend = () => {
+      this.setState({
+        imageUrl: reader.result,
+      });
+    };
+    reader.readAsDataURL(picture);
+  };
+
+  handleSnackBarClose = (event) => {
+    this.setState({ snackBarOpen: false });
   };
 
   onSend = (event) => {

@@ -5,13 +5,12 @@ import { Link } from "react-router-dom";
 import MainPage from "./MainPage";
 import RestaurantPage from "./RestaurantPage";
 import CreateNewReview from "./CreateNewReview";
-import AddNewRestaurant from "./AddNewRestaurant";
+import RequestNewRestaurant from "./RequestNewRestaurant";
 
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import { FavoriteBorder, Home } from "@material-ui/icons";
 import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
 import AddIcon from "@material-ui/icons/Add";
 import Drawer from "@material-ui/core/Drawer";
 
@@ -21,44 +20,52 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      data: [],
+      restaurantData: [],
+      restaurantRequests: [],
       drawerOpen: false,
       loading: false,
     };
   }
 
   toggleDrawer = (event) => {
-    console.log("TESTI");
     this.setState({ drawerOpen: !this.state.drawerOpen });
   };
 
   componentDidMount() {
-    const testRef = firebase.database().ref("Restaurants");
+    const testRef = firebase.database().ref();
     testRef.on("value", (snapshot) => {
       let dbData = snapshot.val();
-      let newState = [];
-      for (let restaurant in dbData) {
+      let restaurantData = [];
+      for (let restaurant in dbData.Restaurants) {
         let reviews = [];
-        for (let review in dbData[restaurant].reviews) {
+        for (let review in dbData.Restaurants[restaurant].reviews) {
           reviews.push({
-            comment: dbData[restaurant].reviews[review].comment,
-            price: dbData[restaurant].reviews[review].price,
-            stars: dbData[restaurant].reviews[review].stars,
-            picture: dbData[restaurant].reviews[review].picture,
-            timestamp: dbData[restaurant].reviews[review].timestamp,
+            comment: dbData.Restaurants[restaurant].reviews[review].comment,
+            price: dbData.Restaurants[restaurant].reviews[review].price,
+            stars: dbData.Restaurants[restaurant].reviews[review].stars,
+            picture: dbData.Restaurants[restaurant].reviews[review].picture,
+            timestamp: dbData.Restaurants[restaurant].reviews[review].timestamp,
           });
         }
         reviews.sort(function (a, b) {
           return new Date(b.timestamp) - new Date(a.timestamp);
         });
-        newState.push({
-          name: dbData[restaurant].name,
-          location: dbData[restaurant].location,
-          openHours: dbData[restaurant].openHours,
+        restaurantData.push({
+          name: dbData.Restaurants[restaurant].name,
+          location: dbData.Restaurants[restaurant].location,
+          openHours: dbData.Restaurants[restaurant].openHours,
           reviews: reviews,
         });
       }
-      this.setState({ data: newState, loading: true });
+      let restaurantRequests = [];
+      for (let request in dbData.RestaurantRequests) {
+        restaurantRequests.push({
+          name: dbData.RestaurantRequests[request].name,
+          location: dbData.RestaurantRequests[request].location,
+          openHours: dbData.RestaurantRequests[request].openHours,
+        });
+      }
+      this.setState({ restaurantData, restaurantRequests, loading: true });
     });
   }
 
@@ -110,7 +117,7 @@ class App extends React.Component {
                 <Grid container spacing={3} alignItems="center">
                   <Grid item align="left">
                     <Link
-                      to="/AddNewRestaurant"
+                      to="/RequestNewRestaurant"
                       style={{ color: "black", textDecoration: "none" }}
                       onClick={this.toggleDrawer}
                     >
@@ -119,11 +126,11 @@ class App extends React.Component {
                   </Grid>
                   <Grid item align="left">
                     <Link
-                      to="/AddNewRestaurant"
+                      to="/RequestNewRestaurant"
                       style={{ color: "black", textDecoration: "none" }}
                       onClick={this.toggleDrawer}
                     >
-                      <p>Add restaurant</p>
+                      <p>Request restaurant</p>
                     </Link>
                   </Grid>
                 </Grid>
@@ -135,7 +142,10 @@ class App extends React.Component {
               exact
               strict
               render={(props) => (
-                <MainPage data={this.state.data} loading={this.state.loading} />
+                <MainPage
+                  restaurantData={this.state.restaurantData}
+                  loading={this.state.loading}
+                />
               )}
             ></Route>
             <Route
@@ -151,10 +161,16 @@ class App extends React.Component {
               render={(props) => <CreateNewReview {...props} />}
             ></Route>
             <Route
-              path="/AddNewRestaurant"
+              path="/RequestNewRestaurant"
               exact
               strict
-              render={(props) => <AddNewRestaurant {...props} />}
+              render={(props) => (
+                <RequestNewRestaurant
+                  restaurantData={this.state.restaurantData}
+                  restaurantRequests={this.state.restaurantRequests}
+                  {...props}
+                />
+              )}
             ></Route>
           </div>
         </BrowserRouter>
