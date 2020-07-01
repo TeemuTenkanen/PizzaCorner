@@ -30,6 +30,7 @@ class MainPage extends React.Component {
     this.state = {
       sortBy: "Near you",
       restaurantKeyWord: "",
+      restaurantData: this.props.restaurantData,
     };
   }
 
@@ -49,6 +50,7 @@ class MainPage extends React.Component {
   handleRestaurantKeyword = (event) => {
     let value = event.target.value;
     this.setState({ restaurantKeyWord: value });
+    this.props.filterRestaurants(value);
   };
 
   componentDidMount() {

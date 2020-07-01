@@ -21,6 +21,7 @@ class App extends React.Component {
     super();
     this.state = {
       restaurantData: [],
+      originalRestaurantData: [],
       restaurantRequests: [],
       drawerOpen: false,
       loading: false,
@@ -29,6 +30,20 @@ class App extends React.Component {
 
   toggleDrawer = (event) => {
     this.setState({ drawerOpen: !this.state.drawerOpen });
+  };
+
+  filterRestaurants = (value) => {
+    let newList = [];
+    if (value !== "") {
+      newList = this.state.originalRestaurantData.filter((restaurant) => {
+        const nameLc = restaurant.name.toLowerCase();
+        const filterLc = value.toLowerCase();
+        return nameLc.includes(filterLc);
+      });
+    } else {
+      newList = this.state.originalRestaurantData;
+    }
+    this.setState({ restaurantData: newList });
   };
 
   componentDidMount() {
@@ -65,7 +80,12 @@ class App extends React.Component {
           openHours: dbData.RestaurantRequests[request].openHours,
         });
       }
-      this.setState({ restaurantData, restaurantRequests, loading: true });
+      this.setState({
+        originalRestaurantData: restaurantData,
+        restaurantData,
+        restaurantRequests,
+        loading: true,
+      });
     });
   }
 
@@ -145,6 +165,7 @@ class App extends React.Component {
                 <MainPage
                   restaurantData={this.state.restaurantData}
                   loading={this.state.loading}
+                  filterRestaurants={this.filterRestaurants}
                 />
               )}
             ></Route>
