@@ -3,7 +3,6 @@ import React from "react";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
-import pizzaPicture from "../testPictures/pizza1.jpg";
 import CardActionArea from "@material-ui/core/CardActionArea";
 
 import Table from "@material-ui/core/Table";
@@ -41,11 +40,7 @@ class ReviewCard extends React.Component {
       <Card>
         <CardActionArea>
           <CardMedia
-            image={
-              this.state.review.picture !== "null"
-                ? this.state.review.picture
-                : pizzaPicture
-            }
+            image={this.state.review.picture}
             title="Pizza mozarella"
             style={{ height: 0, paddingTop: "56.25%" }}
           />

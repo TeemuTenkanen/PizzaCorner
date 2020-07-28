@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import pizzaPicture from "../testPictures/pizza1.jpg";
+import defaultPicture from "../testPictures/noReviews.png";
 import ReviewCard from "./ReviewCard";
 
 import Grid from "@material-ui/core/Grid";
@@ -27,47 +27,63 @@ class RestaurantPage extends React.Component {
 
   componentDidMount() {
     window.scrollTo(0, 0);
-    console.log(this.state.restaurantData);
     let reviews = this.state.restaurantData.reviews;
     let priceSum = 0;
     let starSum = 0;
     for (let i = 0; i < reviews.length; i++) {
-      console.log(reviews[i].price);
-
       priceSum += reviews[i].price;
       starSum += reviews[i].stars;
     }
     let priceAverage = Math.round((priceSum / reviews.length) * 100) / 100;
+    priceAverage = priceAverage + "e";
     let starAverage = Math.round((starSum / reviews.length) * 100) / 100;
     let reviewAverage = "";
+    console.log(starAverage);
     if (starAverage < 1) {
-      reviewAverage = "Poor ";
+      reviewAverage = "Poor " + starAverage + "/5";
     }
     if (1 < starAverage < 2) {
-      reviewAverage = "Okey ";
+      reviewAverage = "Okey " + starAverage + "/5";
     }
     if (2 < starAverage < 3) {
-      reviewAverage = "Good ";
+      reviewAverage = "Good " + starAverage + "/5";
     }
     if (3 < starAverage < 4) {
-      reviewAverage = "Great ";
+      reviewAverage = "Great " + starAverage + "/5";
     }
     if (4 < starAverage < 5) {
-      reviewAverage = "Excellent ";
+      reviewAverage = "Excellent " + starAverage + "/5";
+    }
+    if (isNaN(starAverage)) {
+      reviewAverage = "No reviews";
+      priceAverage = "No reviews";
+    }
+    let favoriteListString = localStorage.getItem("favoriteList");
+    let favoriteButtonColor = "black";
+    if (favoriteListString.includes(this.state.restaurantData.name)) {
+      favoriteButtonColor = "deeppink";
     }
     this.setState({
-      priceAverage: priceAverage,
-      reviewAverage: reviewAverage + starAverage,
+      priceAverage,
+      reviewAverage,
+      favoriteButtonColor,
     });
   }
 
   handleFavoriteButtonClick = () => {
-    //TODO: implement add to favorite list functionality
+    let favoriteListString = localStorage.getItem("favoriteList");
+    let favoriteList = favoriteListString.split(",");
     if (this.state.favoriteButtonColor === "black") {
       this.setState({ favoriteButtonColor: "deeppink" });
+      favoriteList.push(this.state.restaurantData.name);
     } else {
       this.setState({ favoriteButtonColor: "black" });
+      let index = favoriteList.indexOf(this.state.restaurantData.name);
+      if (index !== -1) {
+        favoriteList.splice(index, 1);
+      }
     }
+    localStorage.setItem("favoriteList", favoriteList.toString());
   };
 
   render() {
@@ -75,18 +91,20 @@ class RestaurantPage extends React.Component {
       <div style={{ paddingTop: "85px" }}>
         <img
           src={
-            this.state.restaurantData.reviews[0].picture !== "null"
+            this.state.restaurantData.reviews.length !== 0
               ? this.state.restaurantData.reviews[0].picture
-              : pizzaPicture
+              : defaultPicture
           }
-          title="Pizza mozarella"
+          title={this.state.restaurantData + " picture"}
           style={{ width: "100%" }}
-          alt="pizzaPicture"
+          alt={this.state.restaurantData + " picture"}
         />
         <Container>
           <Grid container spacing={3} alignItems="center">
             <Grid item align="left">
-              <h1>{this.state.restaurantData.name}</h1>
+              <p style={{ fontSize: "28px", fontWeight: "bold" }}>
+                {this.state.restaurantData.name}
+              </p>
             </Grid>
             <Grid item xs align="right">
               <FavoriteBorder
@@ -103,7 +121,7 @@ class RestaurantPage extends React.Component {
               <InsertEmoticonIcon />
             </Grid>
             <Grid item xs={6} align="left">
-              <p>{this.state.reviewAverage}/5</p>
+              <p>{this.state.reviewAverage}</p>
             </Grid>
           </Grid>
           <Grid container spacing={3} alignItems="center">
@@ -127,7 +145,7 @@ class RestaurantPage extends React.Component {
               <EuroSymbolIcon />
             </Grid>
             <Grid item xs={6} align="left">
-              <p>{this.state.priceAverage}e</p>
+              <p>{this.state.priceAverage}</p>
             </Grid>
           </Grid>
 

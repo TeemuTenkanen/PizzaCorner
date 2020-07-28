@@ -9,7 +9,7 @@ import RequestNewRestaurant from "./RequestNewRestaurant";
 
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
-import { FavoriteBorder, Home } from "@material-ui/icons";
+import { Home } from "@material-ui/icons";
 import MenuIcon from "@material-ui/icons/Menu";
 import AddIcon from "@material-ui/icons/Add";
 import Drawer from "@material-ui/core/Drawer";
@@ -46,6 +46,29 @@ class App extends React.Component {
     this.setState({ restaurantData: newList });
   };
 
+  sortRestaurants = (value) => {
+    let newList = [];
+    if (value !== "None") {
+      if (value === "Favorites") {
+        let favoriteListString = localStorage.getItem("favoriteList");
+        newList = this.state.originalRestaurantData.filter((restaurant) => {
+          const nameLc = restaurant.name.toLowerCase();
+          const filterLc = favoriteListString.toLowerCase();
+          return filterLc.includes(nameLc);
+        });
+      }
+      if (value === "Best reviews") {
+        newList = this.state.originalRestaurantData.sort((x, y) =>
+          x.starAverage < y.starAverage ? 1 : -1
+        );
+        console.log(newList);
+      }
+    } else {
+      newList = this.state.originalRestaurantData;
+    }
+    this.setState({ restaurantData: newList });
+  };
+
   componentDidMount() {
     const testRef = firebase.database().ref();
     testRef.on("value", (snapshot) => {
@@ -70,6 +93,7 @@ class App extends React.Component {
           location: dbData.Restaurants[restaurant].location,
           openHours: dbData.Restaurants[restaurant].openHours,
           reviews: reviews,
+          starAverage: dbData.Restaurants[restaurant].starAverage,
         });
       }
       let restaurantRequests = [];
@@ -87,6 +111,10 @@ class App extends React.Component {
         loading: true,
       });
     });
+    let favoriteList = localStorage.getItem("favoriteList");
+    if (favoriteList === null) {
+      localStorage.setItem("favoriteList", "");
+    }
   }
 
   render() {
@@ -128,14 +156,6 @@ class App extends React.Component {
               <Box width={200} ml={2} mt={2}>
                 <Grid container spacing={3} alignItems="center">
                   <Grid item align="left">
-                    <FavoriteBorder />
-                  </Grid>
-                  <Grid item align="left">
-                    <p>Favorites</p>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={3} alignItems="center">
-                  <Grid item align="left">
                     <Link
                       to="/RequestNewRestaurant"
                       style={{ color: "black", textDecoration: "none" }}
@@ -166,6 +186,7 @@ class App extends React.Component {
                   restaurantData={this.state.restaurantData}
                   loading={this.state.loading}
                   filterRestaurants={this.filterRestaurants}
+                  sortRestaurants={this.sortRestaurants}
                 />
               )}
             ></Route>

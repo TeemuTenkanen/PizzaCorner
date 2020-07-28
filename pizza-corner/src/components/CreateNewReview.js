@@ -105,7 +105,7 @@ class CreateNewReview extends React.Component {
           onClose={this.handleSnackBarClose}
         >
           <MuiAlert onClose={this.handleSnackBarClose} severity="success">
-            This is a success message!
+            You created a review.
           </MuiAlert>
         </Snackbar>
         <Grid spacing={3} container justify="center">

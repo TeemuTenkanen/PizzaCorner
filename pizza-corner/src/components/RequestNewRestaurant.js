@@ -35,20 +35,23 @@ class RequestNewRestaurant extends React.Component {
   componentDidMount() {
     let restaurantNames = [];
     for (let restaurant in this.state.restaurantData) {
-      restaurantNames.push(this.state.restaurantData[restaurant].name);
+      restaurantNames.push(
+        this.state.restaurantData[restaurant].name.toLowerCase()
+      );
     }
     for (let request in this.state.restaurantRequests) {
-      restaurantNames.push(this.state.restaurantRequests[request].name);
+      restaurantNames.push(
+        this.state.restaurantRequests[request].name.toLowerCase()
+      );
     }
     this.setState({ restaurantNames });
-    console.log(restaurantNames);
   }
 
   handleChange = (event) => {
     this.setState({ submitDisabled: false });
     let value = event.target.value;
     if (event.target.name === "name") {
-      if (this.state.restaurantNames.includes(value)) {
+      if (this.state.restaurantNames.includes(value.toLowerCase())) {
         this.setState({ showNameError: true, submitDisabled: true });
       }
     }
@@ -91,7 +94,7 @@ class RequestNewRestaurant extends React.Component {
           onClose={this.handleSnackBarClose}
         >
           <MuiAlert onClose={this.handleSnackBarClose} severity="success">
-            You created new restaurant
+            You created new restaurant request.
           </MuiAlert>
         </Snackbar>
         <Snackbar

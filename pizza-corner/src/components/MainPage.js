@@ -1,6 +1,7 @@
 import React from "react";
+import firebase from "./Firebase/firebase";
 import { Link } from "react-router-dom";
-import defaultPicture from "../testPictures/defaultPicture.png";
+import defaultPicture from "../testPictures/noReviews.png";
 
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
@@ -28,23 +29,33 @@ class MainPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      sortBy: "Near you",
+      sortBy: "None",
       restaurantKeyWord: "",
       restaurantData: this.props.restaurantData,
     };
   }
 
-  starAverage = (reviews) => {
-    let starSum = 0;
-    for (let i = 0; i < reviews.length; i++) {
-      starSum += reviews[i].stars;
+  starAverage = (reviews, name) => {
+    if (reviews.length !== 0) {
+      let starSum = 0;
+      for (let i = 0; i < reviews.length; i++) {
+        starSum += reviews[i].stars;
+      }
+      let starAverage = Math.round((starSum / reviews.length) * 100) / 100;
+      firebase
+        .database()
+        .ref("Restaurants/" + name)
+        .update({
+          starAverage: starAverage,
+        });
+      return starAverage;
     }
-    let starAverage = Math.round((starSum / reviews.length) * 100) / 100;
-    return starAverage;
   };
 
   handleSortOrder = (event) => {
-    this.setState({ sortBy: event.target.value });
+    let value = event.target.value;
+    this.setState({ sortBy: value });
+    this.props.sortRestaurants(value);
   };
 
   handleRestaurantKeyword = (event) => {
@@ -74,10 +85,10 @@ class MainPage extends React.Component {
               placeholder="Search by restaurant"
             />
             <Box mt={2} mb={2}>
-              <Select value={this.state.sortBy} onChange={this.handleChange}>
-                <MenuItem value={"Near you"}>Near you</MenuItem>
+              <Select value={this.state.sortBy} onChange={this.handleSortOrder}>
+                <MenuItem value={"None"}>None</MenuItem>
                 <MenuItem value={"Best reviews"}>Best reviews</MenuItem>
-                <MenuItem value={"Random"}>Random</MenuItem>
+                <MenuItem value={"Favorites"}>Favorites</MenuItem>
               </Select>
             </Box>
           </FormControl>
@@ -102,14 +113,18 @@ class MainPage extends React.Component {
                       subheader={restaurant.location}
                       action={
                         <h1 style={{ marginRight: "12px" }}>
-                          {this.starAverage(restaurant.reviews)}/5
+                          {this.starAverage(
+                            restaurant.reviews,
+                            restaurant.name
+                          )}
+                          /5
                         </h1>
                       }
                     />
                     <CardActionArea>
                       <CardMedia
                         image={
-                          restaurant.reviews[0].picture !== "null"
+                          restaurant.reviews.length !== 0
                             ? restaurant.reviews[0].picture
                             : defaultPicture
                         }
