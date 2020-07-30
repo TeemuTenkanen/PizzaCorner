@@ -102,7 +102,7 @@ class RestaurantPage extends React.Component {
         <Container>
           <Grid container spacing={3} alignItems="center">
             <Grid item align="left">
-              <p style={{ fontSize: "28px", fontWeight: "bold" }}>
+              <p style={{ fontSize: "28px" }}>
                 {this.state.restaurantData.name}
               </p>
             </Grid>
@@ -150,7 +150,7 @@ class RestaurantPage extends React.Component {
           </Grid>
 
           <Box mt={6}>
-            <h2>Comments and reviews</h2>
+            <p style={{ fontSize: "28px" }}>Comments and reviews</p>
           </Box>
           <Box mb={10}>
             {this.state.restaurantData.reviews.map((review) => (

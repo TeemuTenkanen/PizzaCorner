@@ -119,7 +119,7 @@ class RequestNewRestaurant extends React.Component {
         </Snackbar>
         <Grid spacing={3} container justify="center">
           <Grid item align="center">
-            <h1>Request new restaurant</h1>
+            <p style={{ fontSize: "28px" }}>Request new restaurant</p>
           </Grid>
           <form onSubmit={this.onSend}>
             <Grid container spacing={3} alignItems="center">

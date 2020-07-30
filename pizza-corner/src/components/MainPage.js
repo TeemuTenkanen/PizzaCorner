@@ -29,7 +29,7 @@ class MainPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      sortBy: "None",
+      sortBy: "All",
       restaurantKeyWord: "",
       restaurantData: this.props.restaurantData,
     };
@@ -86,7 +86,7 @@ class MainPage extends React.Component {
             />
             <Box mt={2} mb={2}>
               <Select value={this.state.sortBy} onChange={this.handleSortOrder}>
-                <MenuItem value={"None"}>None</MenuItem>
+                <MenuItem value={"All"}>All</MenuItem>
                 <MenuItem value={"Best reviews"}>Best reviews</MenuItem>
                 <MenuItem value={"Favorites"}>Favorites</MenuItem>
               </Select>

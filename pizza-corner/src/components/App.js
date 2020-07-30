@@ -48,7 +48,7 @@ class App extends React.Component {
 
   sortRestaurants = (value) => {
     let newList = [];
-    if (value !== "None") {
+    if (value !== "All") {
       if (value === "Favorites") {
         let favoriteListString = localStorage.getItem("favoriteList");
         newList = this.state.originalRestaurantData.filter((restaurant) => {
@@ -70,8 +70,8 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    const testRef = firebase.database().ref();
-    testRef.on("value", (snapshot) => {
+    const dbRef = firebase.database().ref();
+    dbRef.on("value", (snapshot) => {
       let dbData = snapshot.val();
       let restaurantData = [];
       for (let restaurant in dbData.Restaurants) {
