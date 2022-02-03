@@ -92,7 +92,8 @@ class CreateNewReview extends React.Component {
     const submitDisabled =
       this.state.price !== 0 &&
       this.state.comment !== "" &&
-      this.state.stars !== 0
+      this.state.stars !== 0 &&
+      this.state.imageUrl !== "null"
         ? false
         : true;
 
